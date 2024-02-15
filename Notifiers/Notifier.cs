@@ -22,7 +22,7 @@ namespace MedicoverBot.Notifiers
         private Notifier()
         {
             _botOptions = AppSettings.Instance.Configuration.GetSection("botOptions").Get<BotOptions>();
-            _timer = new System.Timers.Timer(_botOptions.RetriesInterval * 1000);
+            _timer = new System.Timers.Timer(1000);
             _notifiersConfig = _config.GetSection("notifiers").Get<string[]>();
             _avaliableNotifiers = new List<INotifier>();
             if (_notifiersConfig.Contains("console"))
@@ -31,6 +31,8 @@ namespace MedicoverBot.Notifiers
                 _avaliableNotifiers.Add(new PushoverNotifier());
             if (_notifiersConfig.Contains("discord"))
                 _avaliableNotifiers.Add(new DiscordNotifier());
+            if (_notifiersConfig.Contains("desktop"))
+                _avaliableNotifiers.Add(new DesktopNotifier());
         }
         public void Send(Item appointment)
         {
@@ -43,6 +45,8 @@ namespace MedicoverBot.Notifiers
         }
         private void OnTimedEvent(object? sender, ElapsedEventArgs e)
         {
+            if(_invokeCount == 0)
+                _timer.Interval = _botOptions.RetriesInterval * 1000;
             _invokeCount++;
             Notify(_appointment);
             if (_invokeCount >= _maxCount)
