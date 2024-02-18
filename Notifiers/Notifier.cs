@@ -26,13 +26,13 @@ namespace MedicoverBot.Notifiers
             _notifiersConfig = _config.GetSection("notifiers").Get<string[]>();
             _avaliableNotifiers = new List<INotifier>();
             if (_notifiersConfig.Contains("console"))
-                _avaliableNotifiers.Add(new ConsoleNotifier());
+                _avaliableNotifiers.Add(ConsoleNotifier.Instance);
             if (_notifiersConfig.Contains("pushover"))
-                _avaliableNotifiers.Add(new PushoverNotifier());
+                _avaliableNotifiers.Add(PushoverNotifier.Instance);
             if (_notifiersConfig.Contains("discord"))
-                _avaliableNotifiers.Add(new DiscordNotifier());
+                _avaliableNotifiers.Add(DiscordNotifier.Instance);
             if (_notifiersConfig.Contains("desktop"))
-                _avaliableNotifiers.Add(new DesktopNotifier());
+                _avaliableNotifiers.Add(DesktopNotifier.Instance);
         }
         public void Send(Item appointment)
         {

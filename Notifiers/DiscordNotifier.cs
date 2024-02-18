@@ -9,6 +9,9 @@ namespace MedicoverBot.Notifiers
 {
     class DiscordNotifier : INotifier
     {
+        private DiscordNotifier() { }
+        static DiscordNotifier() { }
+        public static DiscordNotifier Instance => new DiscordNotifier();
         DiscordConfig discordConfig = AppSettings.Instance.Configuration.GetSection("discord").Get<DiscordConfig>();
         private readonly IConfiguration config = AppSettings.Instance.Configuration;
         public void Notify(Item appointment)

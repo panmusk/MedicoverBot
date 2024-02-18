@@ -5,6 +5,9 @@ namespace MedicoverBot.Notifiers
 {
     internal class DesktopNotifier : INotifier
     {
+        private DesktopNotifier() { }
+        static DesktopNotifier() { }
+        public static DesktopNotifier Instance => new DesktopNotifier();
         public void Notify(Item appointment)
         {
             var daysDisnance = (int)(appointment.AppointmentDate - DateTime.Now).TotalDays;

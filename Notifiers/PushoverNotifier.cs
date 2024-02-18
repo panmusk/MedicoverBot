@@ -10,6 +10,9 @@ namespace MedicoverBot.Notifiers
     {
         private readonly Uri apiUrl = new Uri("https://api.pushover.net/1/messages.json");
         private readonly IConfiguration config = AppSettings.Instance.Configuration;
+        static PushoverNotifier(){}
+        private PushoverNotifier(){}
+        public static PushoverNotifier Instance => new PushoverNotifier();
 
         public async void Notify(Item appointment)
         {
@@ -26,7 +29,7 @@ namespace MedicoverBot.Notifiers
                 data.Add("retry", pushoverConfig.Retry.ToString());
                 data.Add("expire", pushoverConfig.Expire.ToString());
             }
-            var response = await apiUrl
+            using var response = await apiUrl
                 .WithHeader("Content-Type", "application/x-www-form-urlencoded")
                 .PostUrlEncodedAsync(data);
         }
