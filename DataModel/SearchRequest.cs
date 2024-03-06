@@ -5,7 +5,7 @@ namespace MedicoverBot.DataModel
 {
     public partial class AppointmentSearchRequest
     {
-        public AppointmentSearchRequest(int?[] regionIds, int[] serviceIds)
+        public AppointmentSearchRequest(int?[] regionIds, string[] serviceIds)
         {
             RegionIds = regionIds;
             ServiceIds = serviceIds;
@@ -18,7 +18,7 @@ namespace MedicoverBot.DataModel
         public int ServiceTypeId => 2;
 
         [JsonProperty("serviceIds")]
-        public int[] ServiceIds { get; set; }
+        public string[] ServiceIds { get; set; }
 
         // [JsonProperty("searchSince")]
         // public double SearchSince => ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds();

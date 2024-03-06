@@ -20,6 +20,8 @@ namespace MedicoverBot.Config
 
         [JsonProperty("minDistance")]
         public int MinDistance { get; set; }
+        [JsonProperty("maxDistance")]
+        public int MaxDistance { get; set; }
         [JsonProperty("retriesInterval")]
         public int RetriesInterval { get; set; }
         [JsonProperty("notificationRetries")]

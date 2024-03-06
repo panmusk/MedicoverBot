@@ -27,9 +27,16 @@ namespace MedicoverBot
             var selectedKeyWord = Prompt.SelectKeyWord(keyWords);
             var groups = await WebRequest.FetchJsonObjectPostAsync<Group>("https://mol.medicover.pl/api/Selector/GetSelectedGroup", new { KeyWordId = selectedKeyWord.Id, RegionId = queryParameters.RegionId }, getCookie());
             var selectedSection = groups.Sections.Length == 1 ? groups.Sections.SingleOrDefault() : Prompt.SelectSection(groups.Sections);
-            var serviceIds = selectedSection.SectionSettings.SelectMany(x => x.ButtonSettings).SelectMany(x => x.Specialties).Select(x => x.CisSpecId);
+            var specialtiesIds = selectedSection.SectionSettings.SelectMany(x => x.ButtonSettings).SelectMany(x => x.Specialties).Select(x => x.CisSpecId).Distinct();
+            var parameters = specialtiesIds.Select(x => new KeyValuePair<string, string>("selectedSpecialties", x)).ToList();
+            parameters.AddRange(specialtiesIds.Select(x => new KeyValuePair<string, string>("serviceIds", x)));
+            parameters.Add(new("regionIds", queryParameters.RegionId.ToString()));
+            parameters.Add(new("serviceTypeId", "2"));
+            var filterData = await WebRequest.FetchJsonObjectGetAsync<FilterDatas>("https://mol.medicover.pl/api/MyVisits/SearchFreeSlotsToBook/GetFiltersData", getCookie(), parameters);
+            var doctors = filterData.Doctors.Prepend(new Entry(){Id =-1, Text = "(dowolny)"});
+            var selectedDoctor = Prompt.SelectEntry(doctors);
             var checker = Checker.Instance;
-            checker.Initialize(queryParameters.RegionId, serviceIds.ToArray());
+            checker.Initialize(queryParameters.RegionId, specialtiesIds.ToArray(), selectedDoctor.Id);
         }
 
         private static async Task ExtractAppointmentTypes(QueryParameters? queryParameters, KeyWordsObject keyWords)
@@ -50,13 +57,13 @@ namespace MedicoverBot
                     foreach (Section section in groups.Sections)
                     {
                         string name = $"{keyWord.Value} - {section.Name}";
-                        int[] ids = section.SectionSettings
+                        string[] specialtieIds = section.SectionSettings
                             .SelectMany(ss => ss.ButtonSettings)
                             .Where(bs => bs.Specialties != null)
                             .SelectMany(bs => bs.Specialties)
                             .Select(s => s.CisSpecId)
                             .ToArray();
-                        list.Add(new AppointmentType { Name = name, Ids = ids });
+                        list.Add(new AppointmentType { Name = name, Ids = specialtieIds });
 
                     }
                 }
@@ -75,7 +82,7 @@ namespace MedicoverBot
     class AppointmentType
     {
         public string Name { get; set; }
-        public int[] Ids { get; set; }
+        public string[] Ids { get; set; }
     }
 
 }

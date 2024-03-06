@@ -36,16 +36,20 @@ namespace MedicoverBot
                 return result;
             });
         }
-        public static async Task<T> FetchJsonObjectGetAsync<T>(string url, Cookie cookie = null)
+        public static async Task<T> FetchJsonObjectGetAsync<T>(string url, Cookie cookie = null, IEnumerable<KeyValuePair<string,string>> param = null)
         {
             return await _retryPolicy.ExecuteAsync(async () =>
             {
-                using var resp = await url
+                var request = url
                     .WithHeader("Accept", "application/json")
                     .WithHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36")
-                    .WithCookie(cookie.Name, cookie.Value)
+                    .WithCookie(cookie.Name, cookie.Value);
+                if (param != null)
+                    request.SetQueryParams(param);
+                using var resp = await request
                     .GetAsync();
-                var result = await resp.GetJsonAsync<T>();
+                var resultString = await resp.GetStringAsync();
+                var result = JsonConvert.DeserializeObject<T>(resultString);
                 return result;
             });
         }

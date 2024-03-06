@@ -21,5 +21,13 @@ namespace MedicoverBot
                 .UseConverter(x => x.Name)
             );
         }
+        public static Entry SelectEntry(IEnumerable<Entry> sections)
+        {
+            return AnsiConsole.Prompt(
+                new SelectionPrompt<Entry>()
+                .AddChoices(sections)
+                .UseConverter(x => x.Text)
+            );
+        }
     }
 }

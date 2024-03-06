@@ -115,6 +115,6 @@ namespace MedicoverBot.DataModel
     public partial class Specialty
     {
         [JsonProperty("cisSpecId")]
-        public int CisSpecId { get; set; }
+        public string CisSpecId { get; set; }
     }
 }
