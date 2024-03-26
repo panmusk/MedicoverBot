@@ -51,6 +51,7 @@ namespace MedicoverBot
             cookie: getCookie());
             var firstItem = searchResponse.Items
                 .Where(x => this.doctorId == -1 || x.DoctorId == this.doctorId)
+                .Where(x => !x.IsPhoneConsultation)
                 .OrderBy(x => x.AppointmentDate)
                 .FirstOrDefault();
             if (firstItem == null)
