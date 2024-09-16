@@ -1,3 +1,4 @@
+using MedicoverBot.Config;
 using MedicoverBot.DataModel;
 using Spectre.Console;
 
@@ -21,12 +22,20 @@ namespace MedicoverBot
                 .UseConverter(x => x.Name)
             );
         }
-        public static Entry SelectEntry(IEnumerable<Entry> sections)
+        public static Entry SelectEntry(IEnumerable<Entry> entries)
         {
             return AnsiConsole.Prompt(
                 new SelectionPrompt<Entry>()
-                .AddChoices(sections)
+                .AddChoices(entries)
                 .UseConverter(x => x.Text)
+            );
+        }
+        public static MedicoverCredentials SelectProfile(IEnumerable<MedicoverCredentials> profiles)
+        {
+            return AnsiConsole.Prompt(
+                new SelectionPrompt<MedicoverCredentials>()
+                .AddChoices(profiles)
+                .UseConverter(x => x.Name)
             );
         }
     }

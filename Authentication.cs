@@ -19,7 +19,8 @@ namespace MedicoverBot
             Semaphore = new(1, 1);
             Microsoft.Playwright.Program.Main(new string[] { "install", "chromium" });
             _config = AppSettings.Instance.Configuration;
-            _credentials = _config.GetSection("medicover").Get<MedicoverCredentials>();
+            var credentialSet = _config.GetSection("medicover").Get<MedicoverCredentials[]>();
+            _credentials = credentialSet.Length.Equals(1) ? credentialSet.FirstOrDefault() : Prompt.SelectProfile(credentialSet);
             var autoEvent = new AutoResetEvent(false);
             _timer = new Timer(this.RefreshCookie, autoEvent, 0, 5 * 60 * 1000);
             autoEvent.WaitOne();

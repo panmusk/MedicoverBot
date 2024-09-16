@@ -30,7 +30,7 @@ namespace MedicoverBot
             botOptions = config.GetSection("botOptions").Get<BotOptions>();
             _interval = botOptions.QueryInterval * 1000;
         }
-        public void Initialize(int? regionId, string[] serviceIds, int doctorId = -1)
+        public void Initialize(int? regionId, string[] serviceIds, int doctorId = Static.AnyDoctor)
         {
             this.regionId = regionId;
             this.serviceIds = serviceIds;
@@ -50,7 +50,7 @@ namespace MedicoverBot
             data: searchRequest,
             cookie: getCookie());
             var firstItem = searchResponse.Items
-                .Where(x => this.doctorId == -1 || x.DoctorId == this.doctorId)
+                .Where(x => this.doctorId == Static.AnyDoctor || x.DoctorId == this.doctorId)
                 .Where(x => !x.IsPhoneConsultation)
                 .OrderBy(x => x.AppointmentDate)
                 .FirstOrDefault();
